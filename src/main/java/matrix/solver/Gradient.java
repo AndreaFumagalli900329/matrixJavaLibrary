@@ -11,6 +11,7 @@ public class Gradient implements Solver {
 
     @Override
     public MatrixResult solve(DMatrixSparseCSC matrix, SimpleMatrix vector, double tol, SimpleMatrix exactSol) {
+        //Prossimo da implementare
         SimpleMatrix x = new SimpleMatrix(matrix.getNumRows(), 1);
         return new MatrixResult("Gradient", 0.0, 0, 0.0, false, 0.0, x);
     }
