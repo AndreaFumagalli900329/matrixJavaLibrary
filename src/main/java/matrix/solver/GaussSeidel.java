@@ -30,13 +30,12 @@ public class GaussSeidel implements Solver {
         long startTime = System.nanoTime();
 
         for (int k = 0; k < MAX_ITER; k++) {
-            // In Gauss-Seidel l'ordine conta: aggiorniamo x[i] e lo usiamo subito
+            // Aggiorno x[i] e lo uso subito
             for (int i = 0; i < n; i++) {
                 double Ax_i = 0.0;
                 
-                // Prodotto riga i-esima (Manuale)
-                // Usiamo x[j] che contiene sia valori "vecchi" (se j > i) 
-                // sia valori "nuovi" (se j < i)
+                // Prodotto riga i-esima
+                // Usiamo x[j] che contiene sia valori "vecchi" (se j > i) sia valori "nuovi" (se j < i)
                 for (int j = 0; j < n; j++) {
                     double val = matrix.get(i, j);
                     if (val != 0) {
@@ -64,24 +63,13 @@ public class GaussSeidel implements Solver {
 
             if (relativeError < tol) {
                 double executionTime = (System.nanoTime() - startTime) / 1e6;
-                validationError = (exactSol != null) ? validationError(x, exactSol.getDDRM().data) : 0.0;
+                validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
                 return new MatrixResult("Gauss-Seidel", relativeError, k + 1, executionTime, true, validationError, new SimpleMatrix(n, 1, true, x));
             }
         }
         
-        validationError = (exactSol != null) ? validationError(x, exactSol.getDDRM().data) : 0.0;
+        validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
         double executionTime = (System.nanoTime() - startTime) / 1e6;
         return new MatrixResult("Gauss-Seidel", relativeError, MAX_ITER, executionTime, false, validationError, new SimpleMatrix(n, 1, true, x));
-    }
-
-    private double validationError(double[] xComputed, double[] xExact) {
-        double diffNormSq = 0.0;
-        double exactNormSq = 0.0;
-        for (int i = 0; i < xComputed.length; i++) {
-            double diff = xExact[i] - xComputed[i];
-            diffNormSq += diff * diff;
-            exactNormSq += xExact[i] * xExact[i];
-        }
-        return Math.sqrt(diffNormSq) / Math.sqrt(exactNormSq); // [cite: 38]
     }
 }

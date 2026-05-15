@@ -55,24 +55,12 @@ public class Jacobi implements Solver {
 
             if (relativeError < tol) {
                 double executionTime = (System.nanoTime() - startTime) / 1e6;
-                validationError = (exactSol != null) ? validationError(x, exactSol.getDDRM().data) : 0.0;
+                validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
                 return new MatrixResult("Jacobi", relativeError, k + 1, executionTime, true, validationError, new SimpleMatrix(n, 1, true, x));
             }
         }
-        validationError = (exactSol != null) ? validationError(x, exactSol.getDDRM().data) : 0.0;
+        validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
         double executionTime = (System.nanoTime() - startTime) / 1e6;
         return new MatrixResult("Jacobi", relativeError, MAX_ITER, executionTime, false, validationError, new SimpleMatrix(n, 1, true, x));
-    }
-
-    private double validationError(double[] xComputed, double[] xExact) {
-        if(xExact == null) return 0.0;
-        double diffNormSq = 0.0;
-        double exactNormSq = 0.0;
-        for (int i = 0; i < xComputed.length; i++) {
-            double diff = xExact[i] - xComputed[i];
-            diffNormSq += diff * diff;
-            exactNormSq += xExact[i] * xExact[i];
-        }
-        return Math.sqrt(diffNormSq) / Math.sqrt(exactNormSq);
     }
 }

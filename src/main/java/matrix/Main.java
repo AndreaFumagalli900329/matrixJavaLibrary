@@ -5,11 +5,12 @@ import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.simple.SimpleMatrix;
 import matrix.solver.Jacobi;
 import matrix.solver.GaussSeidel;
+import matrix.solver.Gradient;
 import matrix.utils.MatrixResult;
 import matrix.utils.ProjectMatrixUtils;
 
 public class Main {
-    private static final String FILE_NAME = "spa1.mtx";
+    private static final String FILE_NAME = "spa2.mtx";
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -43,6 +44,12 @@ public class Main {
                 GaussSeidel gsSolver = new GaussSeidel();
                 MatrixResult gsResult = gsSolver.solve(matrix, b, tol, exactSol);
                 System.out.println(gsResult);
+
+                System.out.println("------------------------------------------------------------");
+
+                Gradient gradientSolver = new Gradient();
+                MatrixResult gradientResult = gradientSolver.solve(matrix, b, tol, exactSol);
+                System.out.println(gradientResult);
 
             } else {
                 System.out.println("La matrice non rispetta le condizioni (Simmetria/Positività).");

@@ -84,6 +84,17 @@ public final class ProjectMatrixUtils {
         return invDiag;
     }
 
+    public static double validationError(double[] xComputed, double[] xExact) {
+        double diffNormSq = 0.0;
+        double exactNormSq = 0.0;
+        for (int i = 0; i < xComputed.length; i++) {
+            double diff = xExact[i] - xComputed[i];
+            diffNormSq += diff * diff;
+            exactNormSq += xExact[i] * xExact[i];
+        }
+        return Math.sqrt(diffNormSq) / Math.sqrt(exactNormSq);
+    }
+
     public static String vectorToString(SimpleMatrix v) {
         if (v == null) return "";
         

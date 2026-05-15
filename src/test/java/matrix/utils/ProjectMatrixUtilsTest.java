@@ -237,6 +237,35 @@ public class ProjectMatrixUtilsTest {
         ProjectMatrixUtils.inverseDiagonal(zeroDiag);
     }
 
+    // Test per validationError
+    @Test
+    public void testValidationErrorZeroWhenEqual() {
+        double[] xExact = new double[] {1.0, 2.0, 3.0};
+        double[] xComp = new double[] {1.0, 2.0, 3.0};
+
+        double err = ProjectMatrixUtils.validationError(xComp, xExact);
+        assertEquals("Validation error deve essere zero quando i vettori coincidono", 0.0, err, 1e-15);
+    }
+
+    @Test
+    public void testValidationErrorKnownValue() {
+        double[] xExact = new double[] {1.0, 1.0, 1.0};
+        double[] xComp = new double[] {0.0, 1.0, 2.0};
+
+        double expected = Math.sqrt(2.0) / Math.sqrt(3.0);
+        double err = ProjectMatrixUtils.validationError(xComp, xExact);
+        assertEquals("Validation error calcolata correttamente", expected, err, 1e-12);
+    }
+
+    @Test
+    public void testValidationErrorWithSingleNonZeroExact() {
+        double[] xExact = new double[] {1.0, 0.0, 0.0};
+        double[] xComp = new double[] {0.0, 0.0, 0.0};
+
+        double err = ProjectMatrixUtils.validationError(xComp, xExact);
+        assertEquals("Se solo un elemento in exact è non nullo, errore = 1 se computed è zero", 1.0, err, 1e-15);
+    }
+
     private DMatrixSparseCSC createSparseMatrix(double[][] values) {
         int rows = values.length;
         int cols = rows == 0 ? 0 : values[0].length;
