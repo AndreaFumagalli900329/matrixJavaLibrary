@@ -3,18 +3,16 @@ package matrix;
 import java.util.Scanner;
 import org.ejml.data.DMatrixSparseCSC;
 import org.ejml.simple.SimpleMatrix;
-import matrix.solver.Jacobi;
-import matrix.solver.GaussSeidel;
-import matrix.solver.Gradient;
+import matrix.solver.*;
 import matrix.utils.MatrixResult;
 import matrix.utils.ProjectMatrixUtils;
 
 public class Main {
-    private static final String FILE_NAME = "spa2.mtx";
+    private static final String FILE_NAME = "matrixJavaLibrary/spa2.mtx";
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        
+
         System.out.print("Inserire l'esponente della tolleranza (es. -4 per 10^-4): ");
         if (!input.hasNextInt()) {
             System.err.println("Errore: Inserire un numero intero.");
@@ -23,7 +21,7 @@ public class Main {
         }
         int exp = input.nextInt();
         double tol = Math.pow(10, exp);
-        System.out.println("Configurata tolleranza: " + tol);
+        System.out.println("Configurata tollera-4nza: " + tol);
 
         try {
             DMatrixSparseCSC matrix = ProjectMatrixUtils.importMatrix(FILE_NAME);
@@ -50,6 +48,24 @@ public class Main {
                 Gradient gradientSolver = new Gradient();
                 MatrixResult gradientResult = gradientSolver.solve(matrix, b, tol, exactSol);
                 System.out.println(gradientResult);
+
+                System.out.println("------------------------------------------------------------");
+
+                ConjugateGradient conjugateGradientSolver = new ConjugateGradient("array");
+                MatrixResult conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
+                System.out.println(conjugateGradientResult);
+
+                System.out.println("------------------------------------------------------------");
+
+                conjugateGradientSolver = new ConjugateGradient("hybrid");
+                conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
+                System.out.println(conjugateGradientResult);
+
+                System.out.println("------------------------------------------------------------");
+
+                conjugateGradientSolver = new ConjugateGradient("ejml");
+                conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
+                System.out.println(conjugateGradientResult);
 
             } else {
                 System.out.println("La matrice non rispetta le condizioni (Simmetria/Positività).");
