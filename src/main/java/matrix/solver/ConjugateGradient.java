@@ -55,14 +55,12 @@ public class ConjugateGradient implements Solver {
         bNorm = Math.sqrt(bNorm);
 
         if (bNorm == 0) {
-            return new MatrixResult("Conjugate Gradient Array", relativeError, 0, 0.0, true, validationError,
+            return new MatrixResult("Conjugate Gradient Array", relativeError, 0, true, validationError,
                     new SimpleMatrix(n, 1, true, x));
         }
 
         r = b.clone();
         d = r.clone();
-
-        long startTime = System.nanoTime();
 
         for (int k = 0; k < MAX_ITER; k++) {
             double residualNormSq = 0.0;
@@ -109,17 +107,15 @@ public class ConjugateGradient implements Solver {
 
             relativeError = Math.sqrt(residualNormSq) / bNorm;
             if (relativeError < tol) {
-                double executionTime = (System.nanoTime() - startTime) / 1e6;
                 validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data)
                         : 0.0;
-                return new MatrixResult("Conjugate Gradient Array", relativeError, k + 1, executionTime, true,
+                return new MatrixResult("Conjugate Gradient Array", relativeError, k + 1, true,
                         validationError, new SimpleMatrix(n, 1, true, x));
             }
         }
 
-        double executionTime = (System.nanoTime() - startTime) / 1e6;
         validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
-        return new MatrixResult("Conjugate Gradient Array", relativeError, MAX_ITER, executionTime, false, validationError,
+        return new MatrixResult("Conjugate Gradient Array", relativeError, MAX_ITER, false, validationError,
                 new SimpleMatrix(n, 1, true, x));
     }
 
@@ -143,7 +139,7 @@ public class ConjugateGradient implements Solver {
         bNorm = Math.sqrt(bNorm);
 
         if (bNorm == 0) {
-            return new MatrixResult("Conjugate Gradient Hybrid", relativeError, 0, 0.0, true, validationError,
+            return new MatrixResult("Conjugate Gradient Hybrid", relativeError, 0, true, validationError,
                     new SimpleMatrix(n, 1, true, x));
         }
 
@@ -153,8 +149,6 @@ public class ConjugateGradient implements Solver {
         // Wrappiamo gli array in strutture EJML senza copiare dati in memoria
         DMatrixRMaj d_mat = DMatrixRMaj.wrap(n, 1, d);
         DMatrixRMaj y_mat = DMatrixRMaj.wrap(n, 1, y);
-
-        long startTime = System.nanoTime();
 
         for (int k = 0; k < MAX_ITER; k++) {
             double residualNormSq = 0.0;
@@ -189,17 +183,15 @@ public class ConjugateGradient implements Solver {
 
             relativeError = Math.sqrt(residualNormSq) / bNorm;
             if (relativeError < tol) {
-                double executionTime = (System.nanoTime() - startTime) / 1e6;
                 validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data)
                         : 0.0;
-                return new MatrixResult("Conjugate Gradient Hybrid", relativeError, k + 1, executionTime, true,
+                return new MatrixResult("Conjugate Gradient Hybrid", relativeError, k + 1, true,
                         validationError, new SimpleMatrix(n, 1, true, x));
             }
         }
 
-        double executionTime = (System.nanoTime() - startTime) / 1e6;
         validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
-        return new MatrixResult("Conjugate Gradient Hybrid", relativeError, MAX_ITER, executionTime, false,
+        return new MatrixResult("Conjugate Gradient Hybrid", relativeError, MAX_ITER, false,
                 validationError,
                 new SimpleMatrix(n, 1, true, x));
     }
@@ -216,9 +208,8 @@ public class ConjugateGradient implements Solver {
 
         double bNorm = NormOps_DDRM.normF(b);
         if (bNorm == 0)
-            return new MatrixResult("Conjugate Gradient EJML", 0.0, 0, 0.0, true, 0.0, new SimpleMatrix(x));
+            return new MatrixResult("Conjugate Gradient EJML", 0.0, 0, true, 0.0, new SimpleMatrix(x));
 
-        long startTime = System.nanoTime();
 
         for (int k = 0; k < MAX_ITER; k++) {
             // y = A * d
@@ -248,20 +239,18 @@ public class ConjugateGradient implements Solver {
             double relativeError = residualNorm / bNorm;
 
             if (relativeError < tol) {
-                double executionTime = (System.nanoTime() - startTime) / 1e6;
                 double valError = (exactSol != null)
                         ? ProjectMatrixUtils.validationError(x.data, exactSol.getDDRM().data)
                         : 0.0;
-                return new MatrixResult("Conjugate Gradient EJML", relativeError, k + 1, executionTime, true, valError,
+                return new MatrixResult("Conjugate Gradient EJML", relativeError, k + 1, true, valError,
                         new SimpleMatrix(x));
             }
 
         }
 
-        double executionTime = (System.nanoTime() - startTime) / 1e6;
         double valError = (exactSol != null) ? ProjectMatrixUtils.validationError(x.data, exactSol.getDDRM().data)
                 : 0.0;
-        return new MatrixResult("Conjugate Gradient EJML", NormOps_DDRM.normF(r) / bNorm, MAX_ITER, executionTime,
+        return new MatrixResult("Conjugate Gradient EJML", NormOps_DDRM.normF(r) / bNorm, MAX_ITER,
                 false,
                 valError, new SimpleMatrix(x));
     }

@@ -33,15 +33,13 @@ public class Gradient implements Solver {
         bNorm = Math.sqrt(bNorm);
 
         if (bNorm == 0) {
-            return new MatrixResult("Gradient", relativeError, 0, 0.0, true, validationError,
+            return new MatrixResult("Gradient", relativeError, 0, true, validationError,
                     new SimpleMatrix(n, 1, true, x));
         }
 
         r = b.clone();
         DMatrixRMaj p_mat = DMatrixRMaj.wrap(n, 1, p);
         DMatrixRMaj r_mat = DMatrixRMaj.wrap(n, 1, r);
-
-        long startTime = System.nanoTime();
 
         for (int k = 0; k < MAX_ITER; k++) {
             double residualNormSq = 0.0;
@@ -77,17 +75,15 @@ public class Gradient implements Solver {
 
             relativeError = Math.sqrt(residualNormSq) / bNorm;
             if (relativeError < tol) {
-                double executionTime = (System.nanoTime() - startTime) / 1e6;
                 validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data)
                         : 0.0;
-                return new MatrixResult("Gradient", relativeError, k + 1, executionTime, true, validationError,
+                return new MatrixResult("Gradient", relativeError, k + 1, true, validationError,
                         new SimpleMatrix(n, 1, true, x));
             }
         }
-
-        double executionTime = (System.nanoTime() - startTime) / 1e6;
+        
         validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
-        return new MatrixResult("Gradient", relativeError, MAX_ITER, executionTime, false, validationError,
+        return new MatrixResult("Gradient", relativeError, MAX_ITER, false, validationError,
                 new SimpleMatrix(n, 1, true, x));
     }
 }

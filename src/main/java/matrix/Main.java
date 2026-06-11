@@ -209,8 +209,10 @@ public class Main extends JFrame {
 
         new Thread(() -> {
             try {
+                long matrixImportStartTime = System.nanoTime();
                 DMatrixSparseCSC matrix = ProjectMatrixUtils.importMatrix(selectedFile.getAbsolutePath());
                 int n = matrix.numRows;
+                long matrixImportTime = System.nanoTime() - matrixImportStartTime;
                 log("Matrice caricata con successo (" + n + "x" + n + ")");
 
                 SimpleMatrix exactSol = new SimpleMatrix(n, 1);
@@ -220,34 +222,46 @@ public class Main extends JFrame {
                 if (ProjectMatrixUtils.isPositiveDefinite(matrix)) {
                     log("La matrice è simmetrica e definita positiva. Avvio solutori...\n");
 
+                    long jacobiStartTime = System.nanoTime();
                     Jacobi jacobiSolver = new Jacobi();
                     MatrixResult jacobiResult = jacobiSolver.solve(matrix, b, tol, exactSol);
-                    log(jacobiResult.toString());
+                    double jacobiTime = (System.nanoTime() - jacobiStartTime + matrixImportTime) / 1e6;
+                    log(jacobiResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", jacobiTime));
                     log("------------------------------------------------------------");
 
+                    long gsStartTime = System.nanoTime();
                     GaussSeidel gsSolver = new GaussSeidel();
                     MatrixResult gsResult = gsSolver.solve(matrix, b, tol, exactSol);
-                    log(gsResult.toString());
+                    double gsTime = (System.nanoTime() - gsStartTime + matrixImportTime) / 1e6;
+                    log(gsResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", gsTime));
                     log("------------------------------------------------------------");
 
+                    long gradientStartTime = System.nanoTime();
                     Gradient gradientSolver = new Gradient();
                     MatrixResult gradientResult = gradientSolver.solve(matrix, b, tol, exactSol);
-                    log(gradientResult.toString());
+                    double gradientTime = (System.nanoTime() - gradientStartTime + matrixImportTime) / 1e6;
+                    log(gradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", gradientTime));
                     log("------------------------------------------------------------");
 
+                    long cgArrayStartTime = System.nanoTime();
                     ConjugateGradient conjugateGradientSolver = new ConjugateGradient("array");
                     MatrixResult conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-                    log(conjugateGradientResult.toString());
+                    double cgArrayTime = (System.nanoTime() - cgArrayStartTime + matrixImportTime) / 1e6;
+                    log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgArrayTime));
                     log("------------------------------------------------------------");
 
+                    long cgHybridStartTime = System.nanoTime();
                     conjugateGradientSolver = new ConjugateGradient("hybrid");
                     conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-                    log(conjugateGradientResult.toString());
+                    double cgHybridTime = (System.nanoTime() - cgHybridStartTime + matrixImportTime) / 1e6;
+                    log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgHybridTime));
                     log("------------------------------------------------------------");
 
+                    long cgEJMLStartTime = System.nanoTime();
                     conjugateGradientSolver = new ConjugateGradient("ejml");
                     conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-                    log(conjugateGradientResult.toString());
+                    double cgEJMLTime = (System.nanoTime() - cgEJMLStartTime + matrixImportTime) / 1e6;
+                    log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgEJMLTime));
                     log("------------------------------------------------------------");
 
                     log("\n--- ELABORAZIONE COMPLETATA ---");

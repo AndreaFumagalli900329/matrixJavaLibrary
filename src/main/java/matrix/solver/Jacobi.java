@@ -28,12 +28,10 @@ public class Jacobi implements Solver {
         bNorm = Math.sqrt(bNorm);
 
         if (bNorm == 0)
-            return new MatrixResult("Jacobi", relativeError, 0, 0.0, true, validationError,
+            return new MatrixResult("Jacobi", relativeError, 0, true, validationError,
                     new SimpleMatrix(n, 1, true, x));
 
         double[] invDiag = ProjectMatrixUtils.inverseDiagonal(matrix);
-
-        long startTime = System.nanoTime();
 
         double[] Ax = new double[n];
         DMatrixRMaj Ax_mat = DMatrixRMaj.wrap(n, 1, Ax);
@@ -68,16 +66,14 @@ public class Jacobi implements Solver {
             relativeError = Math.sqrt(residualNormSq) / bNorm;
 
             if (relativeError < tol) {
-                double executionTime = (System.nanoTime() - startTime) / 1e6;
                 validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data)
                         : 0.0;
-                return new MatrixResult("Jacobi", relativeError, k + 1, executionTime, true, validationError,
+                return new MatrixResult("Jacobi", relativeError, k + 1, true, validationError,
                         new SimpleMatrix(n, 1, true, x));
             }
         }
         validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
-        double executionTime = (System.nanoTime() - startTime) / 1e6;
-        return new MatrixResult("Jacobi", relativeError, MAX_ITER, executionTime, false, validationError,
+        return new MatrixResult("Jacobi", relativeError, MAX_ITER, false, validationError,
                 new SimpleMatrix(n, 1, true, x));
     }
 }

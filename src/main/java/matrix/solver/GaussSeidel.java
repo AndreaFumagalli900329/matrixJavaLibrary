@@ -28,7 +28,7 @@ public class GaussSeidel implements Solver {
         bNorm = Math.sqrt(bNorm);
 
         if (bNorm == 0) {
-            return new MatrixResult("Gauss-Seidel", relativeError, 0, 0.0, true, validationError,
+            return new MatrixResult("Gauss-Seidel", relativeError, 0, true, validationError,
                     new SimpleMatrix(n, 1, true, x));
         }
 
@@ -37,8 +37,6 @@ public class GaussSeidel implements Solver {
         double[] Ax = new double[n];
         DMatrixRMaj Ax_final_mat = DMatrixRMaj.wrap(n, 1, Ax);
         DMatrixRMaj x_mat = DMatrixRMaj.wrap(n, 1, x);
-
-        long startTime = System.nanoTime();
 
         for (int k = 0; k < MAX_ITER; k++) {
             // Aggiorno x[i] e lo uso subito
@@ -78,17 +76,15 @@ public class GaussSeidel implements Solver {
             relativeError = Math.sqrt(residualNormSq) / bNorm;
 
             if (relativeError < tol) {
-                double executionTime = (System.nanoTime() - startTime) / 1e6;
                 validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data)
                         : 0.0;
-                return new MatrixResult("Gauss-Seidel", relativeError, k + 1, executionTime, true, validationError,
+                return new MatrixResult("Gauss-Seidel", relativeError, k + 1, true, validationError,
                         new SimpleMatrix(n, 1, true, x));
             }
         }
 
         validationError = (exactSol != null) ? ProjectMatrixUtils.validationError(x, exactSol.getDDRM().data) : 0.0;
-        double executionTime = (System.nanoTime() - startTime) / 1e6;
-        return new MatrixResult("Gauss-Seidel", relativeError, MAX_ITER, executionTime, false, validationError,
+        return new MatrixResult("Gauss-Seidel", relativeError, MAX_ITER, false, validationError,
                 new SimpleMatrix(n, 1, true, x));
     }
 }
