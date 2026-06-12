@@ -44,15 +44,6 @@ public class Jacobi implements Solver {
             CommonOps_DSCC.mult(matrix, x_mat, Ax_mat);
             
             for (int i = 0; i < n; i++) {
-                // double Ax_i = 0.0;
-
-                // for (int j = 0; j < n; j++) {
-                //     double val = matrix.get(i, j);
-                //     if (val != 0) {
-                //         Ax_i += val * x[j];
-                //     }
-                // }
-
                 double r_i = b[i] - Ax[i];
                 residualNormSq += r_i * r_i;
 

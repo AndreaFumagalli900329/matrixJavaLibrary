@@ -47,20 +47,6 @@ public class Gradient implements Solver {
             den = 0.0;
 
             CommonOps_DSCC.mult(matrix, r_mat, p_mat);
-
-            // for (int i = 0; i < n; i++) {
-            //     double Ar_i = 0.0;
-
-            //     for (int j = 0; j < n; j++) {
-            //         double val = matrix.get(i, j);
-            //         if (val != 0) {
-            //             Ar_i += val * r[j];
-            //         }
-            //     }
-
-            //     p[i] = Ar_i;
-            // }
-
             for (int i = 0; i < n; i++) {
                 num += r[i] * r[i];
                 den += p[i] * r[i];

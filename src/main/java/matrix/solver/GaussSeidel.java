@@ -34,6 +34,40 @@ public class GaussSeidel implements Solver {
 
         double[] invDiag = ProjectMatrixUtils.inverseDiagonal(matrix);
 
+        
+        // Salvo quanti elementi non zero ci sono per ogni riga (per costruire la matrice in formato CSR)
+        int[] rowPtr = new int[n + 1];
+
+        for(int p = 0; p < matrix.nz_length; p++) {
+            rowPtr[matrix.nz_rows[p]]++;
+        }
+
+        // Calcolo dei puntatori cumulativi per ogni riga
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            int temp = rowPtr[i];
+            rowPtr[i] = sum;
+            sum += temp;
+        }
+        rowPtr[n] = sum; // Ultimo elemento punta alla fine dell'array nz_rows
+
+        // Array di colonne corrispondenti agli elementi non zero, ordinati per riga
+        int[] csrColIdx = new int[matrix.nz_length];
+        double[] csrValues = new double[matrix.nz_length];
+        int[] currentOffsets = rowPtr.clone();
+
+        for (int c = 0; c < n; c++) {
+            int start = matrix.col_idx[c];
+            int end = matrix.col_idx[c + 1];
+            for (int p = start; p < end; p++) {
+                int r = matrix.nz_rows[p];
+                int destPos = currentOffsets[r];
+                csrColIdx[destPos] = c;
+                csrValues[destPos] = matrix.nz_values[p];
+                currentOffsets[r]++;
+            }
+        }
+
         double[] Ax = new double[n];
         DMatrixRMaj Ax_final_mat = DMatrixRMaj.wrap(n, 1, Ax);
         DMatrixRMaj x_mat = DMatrixRMaj.wrap(n, 1, x);
@@ -43,7 +77,7 @@ public class GaussSeidel implements Solver {
             for (int i = 0; i < n; i++) {
                 double Ax_i = 0.0;
 
-                // Prodotto riga i-esima
+                /* Prodotto riga i-esima
                 // Usiamo x[j] che contiene sia valori "vecchi" (se j > i) sia valori "nuovi"
                 // (se j < i)
                 for (int j = 0; j < n; j++) {
@@ -51,6 +85,13 @@ public class GaussSeidel implements Solver {
                     if (val != 0) {
                         Ax_i += val * x[j];
                     }
+                }*/
+
+                int start = rowPtr[i];
+                int end = rowPtr[i + 1];
+                for (int p = start; p < end; p++) {
+                    int j = csrColIdx[p];
+                    Ax_i += csrValues[p] * x[j];
                 }
 
                 // Correzione in-place: x_new = x_old + (b - Ax_old) / A_ii
@@ -63,12 +104,6 @@ public class GaussSeidel implements Solver {
             // vettore x)
             double residualNormSq = 0.0;
             for (int i = 0; i < n; i++) {
-                // double currentAx_i = 0.0;
-                // for (int j = 0; j < n; j++) {
-                // double val = matrix.get(i, j);
-                // if (val != 0)
-                // currentAx_i += val * x[j];
-                // }
                 double r = b[i] - Ax[i];
                 residualNormSq += r * r;
             }

@@ -1,85 +1,3 @@
-// package matrix;
-
-// import java.util.Scanner;
-// import org.ejml.data.DMatrixSparseCSC;
-// import org.ejml.simple.SimpleMatrix;
-// import matrix.solver.*;
-// import matrix.utils.MatrixResult;
-// import matrix.utils.ProjectMatrixUtils;
-
-// public class Main {
-//     private static final String FILE_NAME = "matrixJavaLibrary/spa2.mtx";
-
-//     public static void main(String[] args) {
-//         Scanner input = new Scanner(System.in);
-
-//         System.out.print("Inserire l'esponente della tolleranza (es. -4 per 10^-4): ");
-//         if (!input.hasNextInt()) {
-//             System.err.println("Errore: Inserire un numero intero.");
-//             input.close();
-//             return;
-//         }
-//         int exp = input.nextInt();
-//         double tol = Math.pow(10, exp);
-//         System.out.println("Configurata tollera-4nza: " + tol);
-
-//         try {
-//             DMatrixSparseCSC matrix = ProjectMatrixUtils.importMatrix(FILE_NAME);
-//             int n = matrix.numRows;
-//             System.out.println("Matrice " + FILE_NAME + " caricata con successo (" + n + "x" + n + ")");
-
-//             SimpleMatrix exactSol = new SimpleMatrix(n, 1);
-//             exactSol.fill(1.0);
-//             SimpleMatrix b = SimpleMatrix.wrap(matrix).mult(exactSol);
-
-//             if (ProjectMatrixUtils.isPositiveDefinite(matrix)) {
-//                 Jacobi jacobiSolver = new Jacobi();
-//                 MatrixResult jacobiResult = jacobiSolver.solve(matrix, b, tol, exactSol);
-//                 System.out.println(jacobiResult);
-
-//                 System.out.println("------------------------------------------------------------");
-
-//                 GaussSeidel gsSolver = new GaussSeidel();
-//                 MatrixResult gsResult = gsSolver.solve(matrix, b, tol, exactSol);
-//                 System.out.println(gsResult);
-
-//                 System.out.println("------------------------------------------------------------");
-
-//                 Gradient gradientSolver = new Gradient();
-//                 MatrixResult gradientResult = gradientSolver.solve(matrix, b, tol, exactSol);
-//                 System.out.println(gradientResult);
-
-//                 System.out.println("------------------------------------------------------------");
-
-//                 ConjugateGradient conjugateGradientSolver = new ConjugateGradient("array");
-//                 MatrixResult conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-//                 System.out.println(conjugateGradientResult);
-
-//                 System.out.println("------------------------------------------------------------");
-
-//                 conjugateGradientSolver = new ConjugateGradient("hybrid");
-//                 conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-//                 System.out.println(conjugateGradientResult);
-
-//                 System.out.println("------------------------------------------------------------");
-
-//                 conjugateGradientSolver = new ConjugateGradient("ejml");
-//                 conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-//                 System.out.println(conjugateGradientResult);
-
-//             } else {
-//                 System.out.println("La matrice non rispetta le condizioni (Simmetria/Positività).");
-//             }
-
-//         } catch (Exception e) {
-//             System.err.println("ERRORE DURANTE L'ESECUZIONE: " + e.getMessage());
-//             e.printStackTrace();
-//         } finally {
-//             input.close();
-//         }
-//     }
-// }
-
 package matrix;
 
 import org.ejml.data.DMatrixSparseCSC;
@@ -213,7 +131,7 @@ public class Main extends JFrame {
                 DMatrixSparseCSC matrix = ProjectMatrixUtils.importMatrix(selectedFile.getAbsolutePath());
                 int n = matrix.numRows;
                 long matrixImportTime = System.nanoTime() - matrixImportStartTime;
-                log("Matrice caricata con successo (" + n + "x" + n + ")");
+                log("Matrice caricata con successo (" + n + "x" + n + ") in " + String.format("%.2f ms", matrixImportTime / 1e6));
 
                 SimpleMatrix exactSol = new SimpleMatrix(n, 1);
                 exactSol.fill(1.0);
@@ -243,25 +161,11 @@ public class Main extends JFrame {
                     log(gradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", gradientTime));
                     log("------------------------------------------------------------");
 
-                    long cgArrayStartTime = System.nanoTime();
-                    ConjugateGradient conjugateGradientSolver = new ConjugateGradient("array");
-                    MatrixResult conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-                    double cgArrayTime = (System.nanoTime() - cgArrayStartTime + matrixImportTime) / 1e6;
-                    log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgArrayTime));
-                    log("------------------------------------------------------------");
-
                     long cgHybridStartTime = System.nanoTime();
-                    conjugateGradientSolver = new ConjugateGradient("hybrid");
-                    conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
+                    ConjugateGradient conjugateGradientSolver = new ConjugateGradient();
+                    MatrixResult conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
                     double cgHybridTime = (System.nanoTime() - cgHybridStartTime + matrixImportTime) / 1e6;
                     log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgHybridTime));
-                    log("------------------------------------------------------------");
-
-                    long cgEJMLStartTime = System.nanoTime();
-                    conjugateGradientSolver = new ConjugateGradient("ejml");
-                    conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-                    double cgEJMLTime = (System.nanoTime() - cgEJMLStartTime + matrixImportTime) / 1e6;
-                    log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgEJMLTime));
                     log("------------------------------------------------------------");
 
                     log("\n--- ELABORAZIONE COMPLETATA ---");
