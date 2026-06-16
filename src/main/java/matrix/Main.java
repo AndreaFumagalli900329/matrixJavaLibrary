@@ -143,28 +143,28 @@ public class Main extends JFrame {
                     long jacobiStartTime = System.nanoTime();
                     Jacobi jacobiSolver = new Jacobi();
                     MatrixResult jacobiResult = jacobiSolver.solve(matrix, b, tol, exactSol);
-                    double jacobiTime = (System.nanoTime() - jacobiStartTime + matrixImportTime) / 1e6;
+                    double jacobiTime = (System.nanoTime() - jacobiStartTime) / 1e6;
                     log(jacobiResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", jacobiTime));
                     log("------------------------------------------------------------");
 
                     long gsStartTime = System.nanoTime();
                     GaussSeidel gsSolver = new GaussSeidel();
                     MatrixResult gsResult = gsSolver.solve(matrix, b, tol, exactSol);
-                    double gsTime = (System.nanoTime() - gsStartTime + matrixImportTime) / 1e6;
+                    double gsTime = (System.nanoTime() - gsStartTime) / 1e6;
                     log(gsResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", gsTime));
                     log("------------------------------------------------------------");
 
                     long gradientStartTime = System.nanoTime();
                     Gradient gradientSolver = new Gradient();
                     MatrixResult gradientResult = gradientSolver.solve(matrix, b, tol, exactSol);
-                    double gradientTime = (System.nanoTime() - gradientStartTime + matrixImportTime) / 1e6;
+                    double gradientTime = (System.nanoTime() - gradientStartTime) / 1e6;
                     log(gradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", gradientTime));
                     log("------------------------------------------------------------");
 
                     long cgHybridStartTime = System.nanoTime();
                     ConjugateGradient conjugateGradientSolver = new ConjugateGradient();
                     MatrixResult conjugateGradientResult = conjugateGradientSolver.solve(matrix, b, tol, exactSol);
-                    double cgHybridTime = (System.nanoTime() - cgHybridStartTime + matrixImportTime) / 1e6;
+                    double cgHybridTime = (System.nanoTime() - cgHybridStartTime) / 1e6;
                     log(conjugateGradientResult.toString() + "\n" + String.format(" (Tempo totale: %.2f ms)", cgHybridTime));
                     log("------------------------------------------------------------");
 

@@ -76,17 +76,7 @@ public class GaussSeidel implements Solver {
             // Aggiorno x[i] e lo uso subito
             for (int i = 0; i < n; i++) {
                 double Ax_i = 0.0;
-
-                /* Prodotto riga i-esima
-                // Usiamo x[j] che contiene sia valori "vecchi" (se j > i) sia valori "nuovi"
-                // (se j < i)
-                for (int j = 0; j < n; j++) {
-                    double val = matrix.get(i, j);
-                    if (val != 0) {
-                        Ax_i += val * x[j];
-                    }
-                }*/
-
+                
                 int start = rowPtr[i];
                 int end = rowPtr[i + 1];
                 for (int p = start; p < end; p++) {
