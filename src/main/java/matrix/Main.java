@@ -103,7 +103,7 @@ public class Main extends JFrame {
     }
 
     private void startCalculations() {
-        if (selectedFile == null) {
+        if (selectedFile == null || !selectedFile.getName().toLowerCase().endsWith(".mtx")) {
             JOptionPane.showMessageDialog(this, "Si prega di selezionare un file .mtx", "Errore File",
                     JOptionPane.WARNING_MESSAGE);
             return;
