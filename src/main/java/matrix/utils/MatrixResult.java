@@ -1,4 +1,5 @@
 package matrix.utils;
+
 import org.ejml.simple.SimpleMatrix;
 
 public class MatrixResult {
@@ -9,7 +10,8 @@ public class MatrixResult {
     private double validationError;
     private SimpleMatrix solution;
 
-    public MatrixResult(String methodName, double relativeError, int iterations, boolean converged, double validationError, SimpleMatrix solution) {
+    public MatrixResult(String methodName, double relativeError, int iterations, boolean converged,
+            double validationError, SimpleMatrix solution) {
         this.methodName = methodName;
         this.relativeError = relativeError;
         this.iterations = iterations;
@@ -49,12 +51,10 @@ public class MatrixResult {
         sb.append(String.format("Iterations: %d\n", iterations));
         sb.append(String.format("Converged: %b\n", converged));
         sb.append(String.format("Validation Error: %.6e\n", validationError));
-        
-        /*if (solution != null) {
-            sb.append("Solution Vector:\n");
-            sb.append(ProjectMatrixUtils.vectorToString(solution));
-        }*/
-        
+
+        sb.append("Solution Vector:\n");
+        sb.append(ProjectMatrixUtils.vectorToString(solution));
+
         return sb.toString();
     }
 }

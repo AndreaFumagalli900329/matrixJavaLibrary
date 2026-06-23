@@ -15,18 +15,20 @@ import java.util.Scanner;
 
 public final class ProjectMatrixUtils {
 
-    private ProjectMatrixUtils() {}
-    
-    public static DMatrixSparseCSC importMatrix(String fileName){
+    private ProjectMatrixUtils() {
+    }
+
+    public static DMatrixSparseCSC importMatrix(String fileName) {
         File file = new File(fileName);
-        
-        try (Scanner sc = new Scanner(file)){
+
+        try (Scanner sc = new Scanner(file)) {
             sc.useLocale(Locale.US);
             int rows = 0, cols = 0, nonZero = 0;
 
-            while(sc.hasNextLine()){
+            while (sc.hasNextLine()) {
                 String line = sc.nextLine().trim();
-                if(line.startsWith("%") || line.isEmpty()) continue;
+                if (line.startsWith("%") || line.isEmpty())
+                    continue;
 
                 Scanner lineScanner = new Scanner(line);
                 lineScanner.useLocale(Locale.US);
@@ -41,7 +43,7 @@ public final class ProjectMatrixUtils {
             DMatrixSparseTriplet triplet = new DMatrixSparseTriplet(rows, cols, nonZero);
 
             int count = 0;
-            while(sc.hasNext() && count < nonZero) {
+            while (sc.hasNext() && count < nonZero) {
                 int r = sc.nextInt() - 1;
                 int c = sc.nextInt() - 1;
                 double value = sc.nextDouble();
@@ -52,7 +54,7 @@ public final class ProjectMatrixUtils {
             // Convertiamo da Triplet a CSC (formato efficiente per calcoli)
             DMatrixSparseCSC matrix = new DMatrixSparseCSC(rows, cols, nonZero);
             DConvertMatrixStruct.convert(triplet, matrix);
-            
+
             return matrix;
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("File non trovato: " + fileName, e);
@@ -65,7 +67,8 @@ public final class ProjectMatrixUtils {
 
     @SuppressWarnings("unchecked")
     public static boolean isPositiveDefinite(DMatrixSparseCSC matrix) {
-        if (!isSymmetric(matrix)) return false;
+        if (!isSymmetric(matrix))
+            return false;
 
         CholeskySparseDecomposition_F64<DMatrixSparseCSC> chol = DecompositionFactory_DSCC.cholesky();
         return chol.decompose(matrix);
@@ -96,38 +99,69 @@ public final class ProjectMatrixUtils {
     }
 
     public static String vectorToString(SimpleMatrix v) {
-        if (v == null) return "";
-        
-        int rows = v.numRows();
-        int cols = v.numCols();
-        
+        if (v == null)
+            return "";
+
+        int rows = v.getNumRows();
+        int cols = v.getNumCols();
+
         StringBuilder sb = new StringBuilder();
-        
+
+        // lunghezza head e tail
+        int EDGE = 5;
+
         if (cols == 1) {
             // Vettore colonna
             for (int i = 0; i < rows; i++) {
-                sb.append(String.format(Locale.US, "  [%d]: %12.6e\n", i, v.get(i, 0)));
+                // salta gli agli ultimi EDGE elementi se il vettore contiene più di 2*EDGE
+                // elementi
+                if (rows > EDGE * 2 && i == EDGE) {
+                    sb.append("  ...\n");
+                    i = rows - EDGE - 1;
+                    continue;
+                }
+                sb.append(String.format(Locale.US, "  [%d]: %8.6e\n", i, v.get(i, 0)));
             }
         } else if (rows == 1) {
             // Vettore riga
             sb.append("  ");
             for (int j = 0; j < cols; j++) {
-                sb.append(String.format(Locale.US, "%12.6e", v.get(0, j)));
-                if (j < cols - 1) sb.append(" ");
+                // salta gli agli ultimi EDGE elementi se il vettore contiene più di 2*EDGE
+                // elementi
+                if (cols > EDGE * 2 && j == EDGE) {
+                    sb.append(" ...  ");
+                    j = cols - EDGE - 1;
+                    continue;
+                }
+                sb.append(String.format(Locale.US, "%8.6e", v.get(0, j)));
+                if (j < cols - 1)
+                    sb.append(" ");
             }
             sb.append("\n");
         } else {
-            // Matrice (stampa il contenuto)
+            // Matrice, taglia righe e colonne
             for (int i = 0; i < rows; i++) {
+                // Taglio righe
+                if (rows > EDGE * 2 && i == EDGE) {
+                    sb.append("  ...\n");
+                    i = rows - EDGE - 1;
+                    continue;
+                }
                 sb.append("  ");
                 for (int j = 0; j < cols; j++) {
-                    sb.append(String.format(Locale.US, "%12.6e", v.get(i, j)));
-                    if (j < cols - 1) sb.append(" ");
+                    // Taglio colonne
+                    if (cols > EDGE * 2 && j == EDGE) {
+                        sb.append(" ...  ");
+                        j = cols - EDGE - 1;
+                        continue;
+                    }
+                    sb.append(String.format(Locale.US, "%8.6e", v.get(i, j)));
+                    if (j < cols - 1)
+                        sb.append(" ");
                 }
                 sb.append("\n");
             }
         }
-        
         return sb.toString();
     }
 }
