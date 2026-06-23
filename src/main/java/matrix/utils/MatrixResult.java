@@ -43,8 +43,18 @@ public class MatrixResult {
     }
 
     public String toString() {
-        String str = String.format("Method: %s\nRelative Error: %.6e\nIterations: %d\nConverged: %b\nValidation Error: %.6e",
-                methodName, relativeError, iterations, converged, validationError);
-        return str;
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("Method: %s\n", methodName));
+        sb.append(String.format("Relative Error: %.6e\n", relativeError));
+        sb.append(String.format("Iterations: %d\n", iterations));
+        sb.append(String.format("Converged: %b\n", converged));
+        sb.append(String.format("Validation Error: %.6e\n", validationError));
+        
+        /*if (solution != null) {
+            sb.append("Solution Vector:\n");
+            sb.append(ProjectMatrixUtils.vectorToString(solution));
+        }*/
+        
+        return sb.toString();
     }
 }

@@ -98,19 +98,36 @@ public final class ProjectMatrixUtils {
     public static String vectorToString(SimpleMatrix v) {
         if (v == null) return "";
         
-        double[] data = v.getDDRM().data;
-        int numElements = v.getNumElements(); 
+        int rows = v.numRows();
+        int cols = v.numCols();
         
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < numElements; i++) {
-            sb.append(String.format(Locale.US, "%12.6f", data[i]));
-            
-            if ((i + 1) % 5 == 0) {
+        
+        if (cols == 1) {
+            // Vettore colonna
+            for (int i = 0; i < rows; i++) {
+                sb.append(String.format(Locale.US, "  [%d]: %12.6e\n", i, v.get(i, 0)));
+            }
+        } else if (rows == 1) {
+            // Vettore riga
+            sb.append("  ");
+            for (int j = 0; j < cols; j++) {
+                sb.append(String.format(Locale.US, "%12.6e", v.get(0, j)));
+                if (j < cols - 1) sb.append(" ");
+            }
+            sb.append("\n");
+        } else {
+            // Matrice (stampa il contenuto)
+            for (int i = 0; i < rows; i++) {
+                sb.append("  ");
+                for (int j = 0; j < cols; j++) {
+                    sb.append(String.format(Locale.US, "%12.6e", v.get(i, j)));
+                    if (j < cols - 1) sb.append(" ");
+                }
                 sb.append("\n");
-            } else if (i < numElements - 1) {
-                sb.append(" ");
             }
         }
+        
         return sb.toString();
     }
 }

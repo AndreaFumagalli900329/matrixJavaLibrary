@@ -1,0 +1,5 @@
+matrix\solver\ConjugateGradientSolverTest.class
+matrix\solver\GaussSeidelSolverTest.class
+matrix\solver\GradientSolverTest.class
+matrix\utils\ProjectMatrixUtilsTest.class
+matrix\solver\JacobiSolverTest.class

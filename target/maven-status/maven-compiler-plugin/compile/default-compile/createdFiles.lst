@@ -1,1 +1,8 @@
 matrix\Main.class
+matrix\utils\ProjectMatrixUtils.class
+matrix\utils\MatrixResult.class
+matrix\solver\Solver.class
+matrix\solver\ConjugateGradient.class
+matrix\solver\Gradient.class
+matrix\solver\GaussSeidel.class
+matrix\solver\Jacobi.class
